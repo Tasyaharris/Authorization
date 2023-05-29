@@ -11,13 +11,11 @@ session_start();
         $username = $_POST['username'];
         $password = $_POST['password'];
 
-       if(!empty($username) && !empty($password) && !is_numeric($username))
+        if(!empty($username) && !empty($password) && !is_numeric($username))
         {
             //read from database
             
-            $query = "select * from users where username = '$username' and password='$password' ";
-            $result = mysqli_query($conn, $query);
-            
+
             $query = "select * from users where username = '$username' limit 1 ";
             $result = mysqli_query($conn, $query);
             
@@ -29,40 +27,41 @@ session_start();
                     if($user_data['password'] === $password)
                     {
                         $_SESSION['id'] = $user_data['id'];
-                        // Get the user's role from the database (assuming you have a user table with a role column)
-                        $role = getUserRole($_POST['username']);
-
-                        // Check the user's role and allow or restrict access accordingly
-                        if ($role == 'Guest') {
-                        // Restrict access to the student details page
-                        header("Location: login.php");
-                        exit();
-                         } elseif ($role == 'User') {
-                        // Allow access to the student details page
-                         // But restrict access to the edit and delete buttons for other users' data
-                        //if ($_GET['id'] != $_SESSION['id']) {
-                        //echo "You are not authorized to edit or delete other users' data.";
-                        header("Location: form.php");
-                        exit();
-                         }elseif ($role == 'Admin') {
-                         header("Location: admin_page.php");
-                        exit();
-                        // Allow accessto tstudent details page
-                        // Allow access to the edit and delete buttons for all users' data
-                        }
                         header("Location: index.php");
                         die;
-                    } else
-                    {
+                    }else{
                         echo "WRONG USERNAME OR PASSWORD";
                     }
                 }
             }
              
 
-        
+        // Get the user's role from the database (assuming you have a user table with a role column)
+        $role = getUserRole($_POST['username']);
+
+        // Check the user's role and allow or restrict access accordingly
+        if ($role == 'Guest') {
+        // Restrict access to the student details page
+         header("Location: login.php");
+        exit();
+        } elseif ($role == 'User') {
+        // Allow access to the student details page
+        // But restrict access to the edit and delete buttons for other users' data
+        //if ($_GET['id'] != $_SESSION['id']) {
+        //echo "You are not authorized to edit or delete other users' data.";
+        header("Location: form.php");
+        exit();
+        }elseif ($role == 'Admin') {
+            header("Location: admin_page.php");
+            exit();
+            // Allow accessto tstudent details page
+            // Allow access to the edit and delete buttons for all users' data
+            }
     } }
-        
+        else
+        {
+            echo "WRONG USERNAME OR PASSWORD";
+        }
     
 ?>
 
